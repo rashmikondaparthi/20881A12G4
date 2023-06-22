@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
-function App() {
+const trains = [
+  { id: 1, name: 'Train A', schedule: '9:00 AM' },
+  { id: 2, name: 'Train B', schedule: '11:00 AM' },
+  { id: 3, name: 'Train C', schedule: '1:00 PM' },
+];
+
+const TrainList = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>All Trains</h2>
+      <ul>
+        {trains.map((train) => (
+          <li key={train.id}>
+            <Link to={`/trains/${train.id}`}>{train.name}</Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
+
+const TrainDetails = ({ match }) => {
+  const trainId = parseInt(match.params.trainId);
+  const train = trains.find((train) => train.id === trainId);
+
+  if (!train) {
+    return <div>Train not found</div>;
+  }
+
+  return (
+    <div>
+      <h2>Train Details</h2>
+      <h3>{train.name}</h3>
+      <p>Schedule: {train.schedule}</p>
+      <Link to="/trains">Back to all trains</Link>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/trains" component={TrainList} />
+        <Route path="/trains/:trainId" component={TrainDetails} />
+      </Switch>
+    </Router>
+  );
+};
 
 export default App;
